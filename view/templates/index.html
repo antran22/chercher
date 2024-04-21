@@ -1,0 +1,54 @@
+{{- /* gotype: chercher/view.SearchPageData */ -}}
+
+{{ define "title" }}Chercher Search{{ end }}
+{{ define "content" }}
+  <form class="space-y-2" action="/">
+    <label for="q" class="font-bold">Search</label>
+    <input
+      type="text"
+      name="q"
+      id="q"
+      placeholder="Search query"
+      class="input input-bordered input-md border-2 w-full rounded-lg transition"
+      value="{{ .SearchQuery }}"
+    />
+  </form>
+
+  {{ if .SearchQuery }}
+    <div class="mt-8">
+      <h1 class="text-xl" id="title">
+        {{ if .Results }}
+          Search results for "{{ .SearchQuery }}"
+        {{ else }}
+          Found nothing that matches "{{ .SearchQuery }}"
+        {{ end }}
+      </h1>
+
+      {{ if .Results }}
+        <ul id="results" class="mt-5 divide-base-100">
+          {{ range $index, $item := .Results }}
+            {{ with  $item }}
+              <li id="result-{{ $index }}">
+                {{ if and .Source .SourceIcon }}
+                  <img
+                    src="{{ .SourceIcon }}"
+                    alt="{{ .Source }}"
+                    id="result-{{ $index }}-src-icon"
+                  />
+                {{ end }}
+                <span class="text-xl" id="result-{{ $index }}-src">
+                  From
+                  {{ .Source | default "Unknown" }}
+                </span>
+                <a href="{{ .Href }}" id="result-{{ $index }}-href">
+                  {{ .Title }}
+                </a>
+                <div id="result-{{ $index }}-context">{{ .Context }}</div>
+              </li>
+            {{ end }}
+          {{ end }}
+        </ul>
+      {{ end }}
+    </div>
+  {{ end }}
+{{ end }}

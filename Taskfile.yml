@@ -1,0 +1,52 @@
+---
+# https://taskfile.dev
+version: '3'
+
+tasks:
+  init:
+    desc: Install some important commands and tools
+    cmds:
+      - yarn
+      - go install github.com/mitranim/gow@latest
+      - go mod tidy
+  assets:
+    desc: Build the assets
+    cmds:
+      - yarn tailwindcss -i ./assets/tailwind.css -o ./assets/dist/styles.css
+
+
+  generate:
+    desc: Generate stuff and things
+    cmds:
+      - go generate ./...
+
+  run:
+    desc: Run the application
+    deps:
+      - generate
+      - assets
+    cmds:
+      - go run chercher
+
+  watch_assets:
+    desc: Build and watch the assets
+    cmds:
+      - yarn tailwindcss --watch -i ./assets/tailwind.css -o ./assets/dist/styles.css
+
+  watch_run:
+    desc: Run the go application in watch mode
+    cmds:
+      - gow -v -e=go,mod,html run chercher
+
+  dev:
+    desc: Run the application in development mode
+    deps:
+      - watch_assets
+      - watch_run
+      - generate
+
+
+  test:
+    desc: Run every test
+    cmds:
+      - go test ./...

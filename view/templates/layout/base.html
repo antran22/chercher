@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" data-theme="retro">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ block "title" . }}Chercher{{ end }}</title>
+
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link href="/dist/styles.css" rel="stylesheet" />
+  </head>
+  <body class="w-full h-screen">
+    {{ template "navbar" . }}
+    {{ block "container" . }}
+      <div class="container mx-auto bg-white p-4 md:p-8 rounded-2xl mt-8">
+        {{ block "content" . }}
+          <div>Hello</div>
+        {{ end }}
+      </div>
+    {{ end }}
+  </body>
+</html>
