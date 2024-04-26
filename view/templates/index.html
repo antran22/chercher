@@ -36,11 +36,15 @@
                     id="result-{{ $index }}-src-icon"
                   />
                 {{ end }}
-                <span class="text-xl" id="result-{{ $index }}-src">
+                <div class="text-sm" id="result-{{ $index }}-src">
                   From
                   {{ .Source | default "Unknown" }}
-                </span>
-                <a href="{{ .Href }}" id="result-{{ $index }}-href">
+                </div>
+                <a
+                  href="{{ .Href }}"
+                  id="result-{{ $index }}-href"
+                  class="text-xl text-primary font-bold"
+                >
                   {{ .Title }}
                 </a>
                 <div id="result-{{ $index }}-context">{{ .Context }}</div>

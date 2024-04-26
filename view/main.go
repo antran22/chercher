@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"errors"
+	"github.com/Masterminds/sprig/v3"
 	"html/template"
 	"io"
 	"io/fs"
@@ -25,6 +26,7 @@ var tmplFS embed.FS
 
 func MakeRenderer() (*Renderer, error) {
 	tmplMap := make(templateMap)
+	sprigFuncMap := sprig.FuncMap()
 
 	err := fs.WalkDir(tmplFS, "templates", func(path string, d fs.DirEntry, err error) error {
 		if !d.IsDir() && strings.HasSuffix(path, ".html") {
@@ -38,7 +40,7 @@ func MakeRenderer() (*Renderer, error) {
 			name := strings.Join(parts[1:], string(os.PathSeparator))
 			log.Println("Register template", path, "with name", name)
 
-			fileTmpl, err := template.ParseFS(tmplFS, "templates/layout/*.html", path)
+			fileTmpl, err := template.New(name).Funcs(sprigFuncMap).ParseFS(tmplFS, "templates/layout/*.html", path)
 
 			if err != nil {
 				return err
@@ -61,7 +63,7 @@ func (r *Renderer) render(w io.Writer, name string, data any) error {
 	if !ok {
 		return errors.New("template not found: " + name)
 	}
-	return tmpl.Execute(w, data)
+	return tmpl.ExecuteTemplate(w, "base.html", data)
 }
 
 func (r *Renderer) renderString(name string, data any) (string, error) {

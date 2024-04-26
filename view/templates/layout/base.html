@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="retro">
+<html lang="en" data-theme="solarized">
   <head>
     <meta charset="UTF-8" />
     <title>{{ block "title" . }}Chercher{{ end }}</title>
@@ -7,14 +7,16 @@
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <link href="/dist/styles.css" rel="stylesheet" />
   </head>
-  <body class="w-full h-screen">
+  <body class="w-full h-screen flex flex-col">
     {{ template "navbar" . }}
-    {{ block "container" . }}
-      <div class="container mx-auto bg-white p-4 md:p-8 rounded-2xl mt-8">
-        {{ block "content" . }}
-          <div>Hello</div>
-        {{ end }}
-      </div>
-    {{ end }}
+    <div class="p-4 md:p-8 md:pt-12 w-full grow">
+      {{ block "container" . }}
+        <div class="container mx-auto max-w-screen-xl">
+          {{ block "content" . }}
+            <div>Hello</div>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
   </body>
 </html>

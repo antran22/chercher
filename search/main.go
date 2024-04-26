@@ -4,8 +4,6 @@ type Searcher interface {
 	Search(query string) ([]Result, error)
 }
 
-type DemoSearcher struct{}
-
 type Result struct {
 	Href       string
 	Title      string
@@ -13,6 +11,8 @@ type Result struct {
 	Source     string
 	SourceIcon string
 }
+
+type DemoSearcher struct{}
 
 func (s *DemoSearcher) Search(query string) ([]Result, error) {
 	var searchResult []Result
