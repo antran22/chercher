@@ -30,10 +30,10 @@ func (s *ChercherService) makeServeMux() *http.ServeMux {
 		if searchQuery != "" {
 			results, err := s.searcher.Search(searchQuery)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				log.Println(err)
+			} else {
+				renderData.Results = results
 			}
-			renderData.Results = results
 		}
 
 		w.WriteHeader(http.StatusOK)
@@ -68,7 +68,12 @@ func (s *ChercherService) makeServeMux() *http.ServeMux {
 
 func (s *ChercherService) ListenAndServe(addr string) {
 	s.server.Addr = addr
+	log.Println("Listening on", s.server.Addr)
 	log.Fatalln(s.server.ListenAndServe())
+}
+
+func (s *ChercherService) GetHandler() http.Handler {
+	return s.server.Handler
 }
 
 func (s *ChercherService) ServeHTTPRequest(w http.ResponseWriter, r *http.Request) {

@@ -25,20 +25,22 @@
       </h1>
 
       {{ if .Results }}
-        <ul id="results" class="mt-5 divide-base-100">
+        <ul id="results" class="mt-5 divide-base-100 space-y-4">
           {{ range $index, $item := .Results }}
             {{ with  $item }}
               <li id="result-{{ $index }}">
-                {{ if and .Source .SourceIcon }}
-                  <img
-                    src="{{ .SourceIcon }}"
-                    alt="{{ .Source }}"
-                    id="result-{{ $index }}-src-icon"
-                  />
-                {{ end }}
-                <div class="text-sm" id="result-{{ $index }}-src">
-                  From
-                  {{ .Source | default "Unknown" }}
+                <div class="flex flex-row items-center gap-2">
+                  {{ if and .Source .SourceIcon }}
+                    <img
+                      src="{{ .SourceIcon }}"
+                      alt="{{ .Source }}"
+                      id="result-{{ $index }}-src-icon"
+                    />
+                  {{ end }}
+                  <div class="text-sm" id="result-{{ $index }}-src">
+                    From
+                    {{ .Source | default "Unknown" }}
+                  </div>
                 </div>
                 <a
                   href="{{ .Href }}"

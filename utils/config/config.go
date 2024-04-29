@@ -1,32 +1,47 @@
 package config
 
 import (
-	"chercher/search"
+	"encoding/json"
 	"fmt"
+	"github.com/fatih/structs"
 	"github.com/spf13/viper"
+	"log"
 	"path"
 	"regexp"
 )
 
-type GoEnv string
+type ApplicationMode string
 
 const (
-	Prod GoEnv = "prod"
-	Dev  GoEnv = "dev"
+	Prod ApplicationMode = "prod"
+	Dev  ApplicationMode = "dev"
 )
 
 type SearcherConfig struct {
-	RootConfig *Config
-	Name       string
-	Type       search.SearcherType
-	DataDir    string
-	Config     map[string]interface{}
+	RootConfig *Config                `json:"-"`
+	Name       string                 `json:"name,omitempty" mapstructure:"name" structs:"name"`
+	Type       string                 `json:"type,omitempty"`
+	DataDir    string                 `json:"data_dir,omitempty"`
+	Config     map[string]interface{} `json:"config,omitempty"`
 }
 
 type Config struct {
-	Env             GoEnv
-	SearcherDataDir string
-	SearcherConfigs []SearcherConfig
+	Mode            ApplicationMode  `json:"mode" mapstructure:"app_mode" structs:"app_mode" env:"APP_MODE"`
+	ListenUrl       string           `json:"listen_url" mapstructure:"listen_url" structs:"listen_url" env:"LISTEN_URL"`
+	SearcherDataDir string           `json:"searcher_data_dir" mapstructure:"searcher_data_dir" structs:"searcher_data_dir" env:"SEARCHER_DATA_DIR"`
+	SearcherConfigs []SearcherConfig `json:"searcher_configs" mapstructure:"searcher_configs" structs:"searcher_configs"`
+}
+
+var defaultConfig = Config{
+	Mode:            Dev,
+	ListenUrl:       "127.0.0.1:8080",
+	SearcherDataDir: "data",
+	SearcherConfigs: []SearcherConfig{
+		{
+			Name: "ddg",
+			Type: "DuckDuckGo",
+		},
+	},
 }
 
 func (sc SearcherConfig) getDataDir() string {
@@ -38,13 +53,19 @@ func (sc SearcherConfig) getDataDir() string {
 }
 
 func parseConfig() Config {
+
+	defaultsAsMap := structs.Map(defaultConfig)
+	for key, value := range defaultsAsMap {
+		viper.SetDefault(key, value)
+	}
+
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("/etc/appname/")
 	viper.AddConfigPath("$HOME/.appname")
 	viper.AddConfigPath(".")
-	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("fatal error config file: %w", err))
+	if err := viper.ReadInConfig(); err == nil {
+		log.Println("Using config file:", viper.ConfigFileUsed())
 	}
 	config := Config{}
 
@@ -58,7 +79,11 @@ func parseConfig() Config {
 		config.SearcherConfigs[i].RootConfig = &config
 	}
 
+	if content, err := json.MarshalIndent(config, "", "  "); err == nil {
+		log.Printf("parsed config: \n%s\n", string(content))
+	}
+
 	return config
 }
 
-//var AppConfig = parseConfig()
+var AppConfig = parseConfig()

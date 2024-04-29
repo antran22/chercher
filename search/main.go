@@ -32,3 +32,25 @@ func (s *DemoSearcher) Search(query string) ([]Result, error) {
 func MakeDemoSearcher() Searcher {
 	return &DemoSearcher{}
 }
+
+type AggregatedSearcher struct {
+	searchers []Searcher
+}
+
+func MakeCombinedSearcher(searchers []Searcher) Searcher {
+	return &AggregatedSearcher{
+		searchers: searchers,
+	}
+}
+
+func (s *AggregatedSearcher) Search(query string) ([]Result, error) {
+	var searchResult []Result
+	for _, searcher := range s.searchers {
+		results, err := searcher.Search(query)
+		if err != nil {
+			return nil, err
+		}
+		searchResult = append(searchResult, results...)
+	}
+	return searchResult, nil
+}

@@ -7,7 +7,9 @@ import (
 )
 
 func TestDuckDuckGoSearcher(t *testing.T) {
-	ddg, err := MakeDuckDuckGoSearcher(config.SearcherConfig{})
+	ddg, err := MakeDuckDuckGoSearcher(config.SearcherConfig{
+		Type: "duckduckgo",
+	})
 	require.NoError(t, err)
 	require.NotNil(t, ddg)
 

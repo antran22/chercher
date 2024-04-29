@@ -25,6 +25,15 @@ type Renderer struct {
 var tmplFS embed.FS
 
 func MakeRenderer() (*Renderer, error) {
+	r := &Renderer{}
+	err := r.Load()
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (r *Renderer) Load() error {
 	tmplMap := make(templateMap)
 	sprigFuncMap := sprig.FuncMap()
 
@@ -51,11 +60,10 @@ func MakeRenderer() (*Renderer, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &Renderer{
-		templates: &tmplMap,
-	}, nil
+	r.templates = &tmplMap
+	return nil
 }
 
 func (r *Renderer) render(w io.Writer, name string, data any) error {

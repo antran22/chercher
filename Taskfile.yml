@@ -40,10 +40,8 @@ tasks:
 
   dev:
     desc: Run the application in development mode
-    deps:
-      - watch_assets
-      - watch_run
-      - generate
+    cmds:
+      - yarn tailwindcss --watch -i ./assets/tailwind.css -o ./assets/dist/styles.css & gow -v -e=go,mod,html run chercher
 
 
   test:
