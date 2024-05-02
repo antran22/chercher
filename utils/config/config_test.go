@@ -12,9 +12,9 @@ func TestSearcherConfig(t *testing.T) {
 			RootConfig: &Config{
 				SearcherDataDir: "/tmp",
 			},
-			Name:    "ddg",
+			ID:      "ddg",
 			DataDir: "/tmp/duckduckgo",
-			Type:    search.SearcherTypeDuckDuckGo,
+			Type:    string(search.SearcherTypeDuckDuckGo),
 			Config: map[string]interface{}{
 				"foo": "bar",
 			},
@@ -27,8 +27,8 @@ func TestSearcherConfig(t *testing.T) {
 			RootConfig: &Config{
 				SearcherDataDir: "/tmp",
 			},
-			Name: "ddg",
-			Type: search.SearcherTypeDuckDuckGo,
+			ID:   "ddg",
+			Type: string(search.SearcherTypeDuckDuckGo),
 			Config: map[string]interface{}{
 				"foo": "bar",
 			},

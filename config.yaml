@@ -1,9 +1,10 @@
 app_mode: dev
 searcher_data_dir: data
 searcher_configs:
-  - name: Kagi
+  - id: kagi
     type: kagi
     config:
       token: KgAA0P3APwU.XUTG3fzJJT-jTorGSsU76Do8qS7g-iF7JnJd7Ucn_8o
 #  - name: ddg
 #    type: DuckDuckGo
+

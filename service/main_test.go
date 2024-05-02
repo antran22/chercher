@@ -2,7 +2,7 @@ package service
 
 import (
 	"chercher/search"
-	"chercher/utils"
+	"chercher/utils/test"
 	"chercher/view"
 	"github.com/stretchr/testify/require"
 	"net/http"
@@ -39,7 +39,7 @@ func TestStartServer(t *testing.T) {
 		request := httptest.NewRequest(http.MethodGet, "/about", nil)
 		response := makeRequest(request)
 		require.Equal(t, http.StatusOK, response.Code)
-		_, err := utils.ParseHTMLToGoqueryDoc(response.Result())
+		_, err := test.ParseHTMLToGoqueryDoc(response.Result())
 		require.NoError(t, err)
 	})
 
@@ -47,7 +47,7 @@ func TestStartServer(t *testing.T) {
 		request := httptest.NewRequest(http.MethodGet, "/?q=hello", nil)
 		response := makeRequest(request)
 		require.Equal(t, http.StatusOK, response.Code)
-		doc, err := utils.ParseHTMLToGoqueryDoc(response.Result())
+		doc, err := test.ParseHTMLToGoqueryDoc(response.Result())
 		require.NoError(t, err)
 
 		titleNode := doc.Find("#title").First()
@@ -60,7 +60,7 @@ func TestStartServer(t *testing.T) {
 		request := httptest.NewRequest(http.MethodGet, "/?q=an%20tran", nil)
 		response := makeRequest(request)
 		require.Equal(t, http.StatusOK, response.Code)
-		doc, err := utils.ParseHTMLToGoqueryDoc(response.Result())
+		doc, err := test.ParseHTMLToGoqueryDoc(response.Result())
 		require.NoError(t, err)
 
 		titleNode := doc.Find("#title").First()
@@ -73,19 +73,19 @@ func TestStartServer(t *testing.T) {
 		request := httptest.NewRequest(http.MethodGet, "/?q=empty%20result", nil)
 		response := makeRequest(request)
 		require.Equal(t, http.StatusOK, response.Code)
-		doc, err := utils.ParseHTMLToGoqueryDoc(response.Result())
+		doc, err := test.ParseHTMLToGoqueryDoc(response.Result())
 		require.NoError(t, err)
 
 		titleNode := doc.Find("#title").First()
 		require.NotNil(t, titleNode)
-		require.Contains(t, utils.NodeText(titleNode), `Found nothing that matches "empty result"`)
+		require.Contains(t, test.NodeText(titleNode), `Found nothing that matches "empty result"`)
 	})
 
 	t.Run("Test call to / with no query", func(t *testing.T) {
 		request := httptest.NewRequest(http.MethodGet, "/?q=", nil)
 		response := makeRequest(request)
 		require.Equal(t, http.StatusOK, response.Code)
-		doc, err := utils.ParseHTMLToGoqueryDoc(response.Result())
+		doc, err := test.ParseHTMLToGoqueryDoc(response.Result())
 		require.NoError(t, err)
 
 		require.Equal(t, 0, doc.Find("#title").Length())

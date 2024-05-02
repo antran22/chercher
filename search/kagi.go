@@ -4,6 +4,8 @@ import (
 	"chercher/utils/config"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"io"
+	"log"
 	"net/http"
 	"net/http/cookiejar"
 )
@@ -23,7 +25,12 @@ func (s *kagiSearcher) Search(query string) ([]Result, error) {
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Println("error closing response body", err)
+		}
+	}(resp.Body)
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 
@@ -53,7 +60,7 @@ func (s *kagiSearcher) Search(query string) ([]Result, error) {
 	return results, nil
 }
 
-func MakeKagiSearcher(config config.SearcherConfig) (*kagiSearcher, error) {
+func MakeKagiSearcher(config config.SearcherConfig) (Searcher, error) {
 	if SearcherType(config.Type) != SearcherTypeKagi {
 		return nil, fmt.Errorf("searcher type mismatch: %s", config.Type)
 	}

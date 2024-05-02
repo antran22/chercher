@@ -4,6 +4,8 @@ import (
 	"chercher/utils/config"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -41,7 +43,12 @@ func (s *duckduckgoSearcher) Search(query string) ([]Result, error) {
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Println("error closing response body", err)
+		}
+	}(resp.Body)
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 
@@ -71,7 +78,7 @@ func (s *duckduckgoSearcher) Search(query string) ([]Result, error) {
 	return results, nil
 }
 
-func MakeDuckDuckGoSearcher(config config.SearcherConfig) (*duckduckgoSearcher, error) {
+func MakeDuckDuckGoSearcher(config config.SearcherConfig) (Searcher, error) {
 	if SearcherType(config.Type) != SearcherTypeDuckDuckGo {
 		return nil, fmt.Errorf("searcher type mismatch: %s", config.Type)
 	}

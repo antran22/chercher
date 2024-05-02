@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/fatih/structs"
 	"github.com/spf13/viper"
@@ -19,7 +20,7 @@ const (
 
 type SearcherConfig struct {
 	RootConfig *Config                `json:"-"`
-	Name       string                 `json:"name,omitempty" mapstructure:"name" structs:"name"`
+	ID         string                 `json:"id,omitempty" mapstructure:"id" structs:"id"`
 	Type       string                 `json:"type,omitempty"`
 	DataDir    string                 `json:"data_dir,omitempty"`
 	Config     map[string]interface{} `json:"config,omitempty"`
@@ -32,13 +33,22 @@ type Config struct {
 	SearcherConfigs []SearcherConfig `json:"searcher_configs" mapstructure:"searcher_configs" structs:"searcher_configs"`
 }
 
+func (c *Config) GetSearcherConfig(id string) (*SearcherConfig, error) {
+	for _, sc := range c.SearcherConfigs {
+		if sc.ID == id {
+			return &sc, nil
+		}
+	}
+	return nil, fmt.Errorf("searcher config not found: %s", id)
+}
+
 var defaultConfig = Config{
 	Mode:            Dev,
 	ListenUrl:       "127.0.0.1:8080",
 	SearcherDataDir: "data",
 	SearcherConfigs: []SearcherConfig{
 		{
-			Name: "ddg",
+			ID:   "ddg",
 			Type: "DuckDuckGo",
 		},
 	},
@@ -48,11 +58,12 @@ func (sc SearcherConfig) getDataDir() string {
 	if sc.DataDir != "" {
 		return sc.DataDir
 	}
-	normalizedName := regexp.MustCompile(`/[^\w ]+/g`).ReplaceAllString(sc.Name, "")
+	normalizedName := regexp.MustCompile(`/[^\w ]+/g`).ReplaceAllString(sc.ID, "")
 	return path.Join(sc.RootConfig.SearcherDataDir, normalizedName)
 }
 
 func parseConfig() Config {
+	configFilePath := flag.String("config", "", "path to config file")
 
 	defaultsAsMap := structs.Map(defaultConfig)
 	for key, value := range defaultsAsMap {
@@ -64,8 +75,13 @@ func parseConfig() Config {
 	viper.AddConfigPath("/etc/appname/")
 	viper.AddConfigPath("$HOME/.appname")
 	viper.AddConfigPath(".")
+	if (*configFilePath) != "" {
+		viper.SetConfigFile(*configFilePath)
+	}
 	if err := viper.ReadInConfig(); err == nil {
 		log.Println("Using config file:", viper.ConfigFileUsed())
+	} else {
+		log.Println("Error reading config file:", err)
 	}
 	config := Config{}
 

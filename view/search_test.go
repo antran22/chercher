@@ -3,7 +3,7 @@ package view
 import (
 	"bytes"
 	"chercher/search"
-	"chercher/utils"
+	"chercher/utils/test"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,7 +25,7 @@ func TestRenderSearchPage(t *testing.T) {
 		require.NoError(t, err) // valid HTML returned
 		require.NotNil(t, doc)
 
-		assert.Contains(t, utils.NodeText(doc.Find("#title")), "Found nothing that matches \"hello\"")
+		assert.Contains(t, test.NodeText(doc.Find("#title")), "Found nothing that matches \"hello\"")
 		assert.Equal(t, 0, doc.Find("#results > li").Length())
 	})
 
@@ -57,7 +57,7 @@ func TestRenderSearchPage(t *testing.T) {
 		assert.Contains(t, doc.Find("h1#title").Text(), "Search results for \"hi\"")
 		assert.Equal(t, 1, doc.Find("#results > li").Length())
 		assert.Equal(t, "https://example.com", doc.Find("a#result-0-href").AttrOr("href", ""))
-		assert.Contains(t, utils.NodeText(doc.Find("#result-0-src")), "From example")
+		assert.Contains(t, test.NodeText(doc.Find("#result-0-src")), "From example")
 		assert.Equal(t, "https://example.com/icon.png", doc.Find("img#result-0-src-icon").AttrOr("src", ""))
 	})
 }
