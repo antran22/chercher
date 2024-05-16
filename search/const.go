@@ -7,5 +7,5 @@ const (
 	SearcherTypeKagi       SearcherType = "kagi"
 	SearcherTypeGoogle     SearcherType = "google"
 	SearcherTypeBing       SearcherType = "bing"
-	SearcherTypeFile       SearcherType = "file"
+	SearcherTypeLocal      SearcherType = "local"
 )

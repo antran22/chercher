@@ -7,3 +7,8 @@ searcher_configs:
       token: fill_your_token_here
   - name: DuckDuckGo
     type: duckduckgo
+  - id: local
+    type: local
+    config:
+      dir: /tmp
+

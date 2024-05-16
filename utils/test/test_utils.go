@@ -26,7 +26,7 @@ func NodeText(node *goquery.Selection) string {
 func ChdirToProjectRoot(t *testing.T) func() {
 	wd, err := os.Getwd()
 	_, filename, _, _ := runtime.Caller(0)
-	dir := path.Join(path.Dir(filename), "..")
+	dir := path.Join(path.Dir(filename), "..", "..")
 	t.Log("changing working directory to", dir)
 	err = os.Chdir(dir)
 	if err != nil {

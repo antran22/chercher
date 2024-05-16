@@ -11,11 +11,11 @@ import (
 	"strings"
 )
 
-type duckduckgoSearcher struct {
+type DuckDuckGoSearcher struct {
 	client *http.Client
 }
 
-func (s *duckduckgoSearcher) Search(query string) ([]Result, error) {
+func (s *DuckDuckGoSearcher) Search(query string) ([]Result, error) {
 	// Adapt from https://github.com/deedy5/duckduckgo_search/blob/main/duckduckgo_search/duckduckgo_search_async.py
 	params := url.Values{
 		"q":   {query},
@@ -78,10 +78,10 @@ func (s *duckduckgoSearcher) Search(query string) ([]Result, error) {
 	return results, nil
 }
 
-func MakeDuckDuckGoSearcher(config config.SearcherConfig) (Searcher, error) {
+func MakeDuckDuckGoSearcher(config config.SearcherConfig) (*DuckDuckGoSearcher, error) {
 	if SearcherType(config.Type) != SearcherTypeDuckDuckGo {
 		return nil, fmt.Errorf("searcher type mismatch: %s", config.Type)
 	}
 	client := &http.Client{}
-	return &duckduckgoSearcher{client: client}, nil
+	return &DuckDuckGoSearcher{client: client}, nil
 }

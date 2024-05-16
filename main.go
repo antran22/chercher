@@ -14,18 +14,28 @@ func main() {
 	var searchers []search.Searcher
 
 	for _, sc := range config.AppConfig.SearcherConfigs {
-		if sc.Type == string(search.SearcherTypeDuckDuckGo) {
+		switch sc.Type {
+		case string(search.SearcherTypeDuckDuckGo):
 			ddg, err := search.MakeDuckDuckGoSearcher(sc)
 			if err != nil {
-				log.Println("failed to make DuckDuckGoSearcher", err)
+				log.Println("failed to make DuckDuckGoSearcher:", err)
+			} else {
+				searchers = append(searchers, ddg)
 			}
-			searchers = append(searchers, ddg)
-		} else if sc.Type == string(search.SearcherTypeKagi) {
+		case string(search.SearcherTypeKagi):
 			kagi, err := search.MakeKagiSearcher(sc)
 			if err != nil {
-				log.Println("failed to make DuckDuckGoSearcher", err)
+				log.Println("failed to make KagiSearcher:", err)
+			} else {
+				searchers = append(searchers, kagi)
 			}
-			searchers = append(searchers, kagi)
+		case string(search.SearcherTypeLocal):
+			local, err := search.MakeLocalSearcher(sc)
+			if err != nil {
+				log.Println("failed to make LocalSearcher:", err)
+			} else {
+				searchers = append(searchers, local)
+			}
 		}
 	}
 

@@ -7,7 +7,7 @@ import (
 )
 
 func TestSearcherConfig(t *testing.T) {
-	t.Run("test getDataDir, normal case", func(t *testing.T) {
+	t.Run("test GetDataDir, normal case", func(t *testing.T) {
 		sc := SearcherConfig{
 			RootConfig: &Config{
 				SearcherDataDir: "/tmp",
@@ -20,9 +20,9 @@ func TestSearcherConfig(t *testing.T) {
 			},
 		}
 
-		assert.Equal(t, "/tmp/duckduckgo", sc.getDataDir())
+		assert.Equal(t, "/tmp/duckduckgo", sc.GetDataDir())
 	})
-	t.Run("test getDataDir, defaulting case", func(t *testing.T) {
+	t.Run("test GetDataDir, defaulting case", func(t *testing.T) {
 		sc := SearcherConfig{
 			RootConfig: &Config{
 				SearcherDataDir: "/tmp",
@@ -34,6 +34,6 @@ func TestSearcherConfig(t *testing.T) {
 			},
 		}
 
-		assert.Equal(t, "/tmp/ddg", sc.getDataDir())
+		assert.Equal(t, "/tmp/ddg", sc.GetDataDir())
 	})
 }

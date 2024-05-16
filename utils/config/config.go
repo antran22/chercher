@@ -19,11 +19,11 @@ const (
 )
 
 type SearcherConfig struct {
-	RootConfig *Config                `json:"-"`
-	ID         string                 `json:"id,omitempty" mapstructure:"id" structs:"id"`
-	Type       string                 `json:"type,omitempty"`
-	DataDir    string                 `json:"data_dir,omitempty"`
-	Config     map[string]interface{} `json:"config,omitempty"`
+	ID      string `json:"id,omitempty" mapstructure:"id" structs:"id"`
+	Type    string `json:"type,omitempty"`
+	DataDir string `json:"data_dir,omitempty"`
+	// Todo: use json.RawMessage instead. Only unmarshal after determining type
+	Config map[string]interface{} `json:"config,omitempty"`
 }
 
 type Config struct {
@@ -54,12 +54,12 @@ var defaultConfig = Config{
 	},
 }
 
-func (sc SearcherConfig) getDataDir() string {
+func (sc SearcherConfig) GetDataDir() string {
 	if sc.DataDir != "" {
 		return sc.DataDir
 	}
 	normalizedName := regexp.MustCompile(`/[^\w ]+/g`).ReplaceAllString(sc.ID, "")
-	return path.Join(sc.RootConfig.SearcherDataDir, normalizedName)
+	return path.Join(AppConfig.SearcherDataDir, normalizedName)
 }
 
 func parseConfig() Config {
@@ -89,10 +89,6 @@ func parseConfig() Config {
 
 	if err != nil {
 		panic(fmt.Errorf("fatal error parsing config file: %w", err))
-	}
-
-	for i := range config.SearcherConfigs {
-		config.SearcherConfigs[i].RootConfig = &config
 	}
 
 	if content, err := json.MarshalIndent(config, "", "  "); err == nil {

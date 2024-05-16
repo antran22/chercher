@@ -7,16 +7,22 @@ import (
 )
 
 func TestDuckDuckGoSearcher(t *testing.T) {
-	t.Skip("skipping due to rate limit")
 	ddg, err := MakeDuckDuckGoSearcher(config.SearcherConfig{
 		Type: "duckduckgo",
 	})
 	require.NoError(t, err)
 	require.NotNil(t, ddg)
-
-	t.Run("test search", func(t *testing.T) {
-		results, err := ddg.Search("hello")
-		require.NoError(t, err)
-		require.Greater(t, len(results), 0)
+}
+func TestDuckDuckGoSearcher_Search(t *testing.T) {
+	if !*testExternalSearcher {
+		t.Skip("skipping due to rate limit")
+	}
+	ddg, err := MakeDuckDuckGoSearcher(config.SearcherConfig{
+		Type: "duckduckgo",
 	})
+	require.NoError(t, err)
+	require.NotNil(t, ddg)
+	results, err := ddg.Search("hello")
+	require.NoError(t, err)
+	require.Greater(t, len(results), 0)
 }

@@ -10,12 +10,12 @@ import (
 	"net/http/cookiejar"
 )
 
-type kagiSearcher struct {
+type KagiSearcher struct {
 	client *http.Client
 	token  string
 }
 
-func (s *kagiSearcher) Search(query string) ([]Result, error) {
+func (s *KagiSearcher) Search(query string) ([]Result, error) {
 	resp, err := s.client.Get("https://kagi.com/html/search?q=" + query)
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (s *kagiSearcher) Search(query string) ([]Result, error) {
 	return results, nil
 }
 
-func MakeKagiSearcher(config config.SearcherConfig) (Searcher, error) {
+func MakeKagiSearcher(config config.SearcherConfig) (*KagiSearcher, error) {
 	if SearcherType(config.Type) != SearcherTypeKagi {
 		return nil, fmt.Errorf("searcher type mismatch: %s", config.Type)
 	}
@@ -79,5 +79,5 @@ func MakeKagiSearcher(config config.SearcherConfig) (Searcher, error) {
 		return nil, err
 	}
 
-	return &kagiSearcher{client: client, token: token}, nil
+	return &KagiSearcher{client: client, token: token}, nil
 }

@@ -37,13 +37,15 @@ type AggregatedSearcher struct {
 	searchers []Searcher
 }
 
-func MakeCombinedSearcher(searchers []Searcher) Searcher {
+func MakeCombinedSearcher(searchers []Searcher) *AggregatedSearcher {
 	return &AggregatedSearcher{
 		searchers: searchers,
 	}
 }
 
 func (s *AggregatedSearcher) Search(query string) ([]Result, error) {
+	// Todo: implement parallelized search
+	// Todo: implement tf-idf ranking of results
 	var searchResult []Result
 	for _, searcher := range s.searchers {
 		results, err := searcher.Search(query)
