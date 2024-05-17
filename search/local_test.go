@@ -16,8 +16,8 @@ func TestMakeLocalSearcher(t *testing.T) {
 		ID:   "local",
 		Type: string(SearcherTypeLocal),
 		Config: map[string]interface{}{
-			"dir":         path.Join(cwd, "tests/mockData"),
-			"ripgrepPath": "/opt/homebrew/bin/rg",
+			"dir":          path.Join(cwd, "tests/mockData"),
+			"ripgrep_path": "/opt/homebrew/bin/rg",
 		},
 	}
 	localSearch, err := MakeLocalSearcher(localConfig)

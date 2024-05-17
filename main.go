@@ -39,7 +39,7 @@ func main() {
 		}
 	}
 
-	combinedSearchers := search.MakeCombinedSearcher(searchers)
+	combinedSearchers := search.MakeAggregatedSearcher(searchers)
 
 	renderer, err := view.MakeRenderer()
 	if err != nil {

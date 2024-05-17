@@ -1,5 +1,10 @@
 package search
 
+import (
+	"math/rand/v2"
+	"time"
+)
+
 type Searcher interface {
 	Search(query string) ([]Result, error)
 }
@@ -12,47 +17,46 @@ type Result struct {
 	SourceIcon string
 }
 
-type DemoSearcher struct{}
+type DemoSearcher struct {
+	minDelay int
+	maxDelay int
+}
 
 func (s *DemoSearcher) Search(query string) ([]Result, error) {
 	var searchResult []Result
 	if query == "empty result" {
 		return searchResult, nil
 	}
-	return []Result{
+	result := []Result{
 		{
-			Href:  "https://duckduckgo.com/?q=" + query,
-			Title: "DuckDuckGo " + query,
+			Href:  "/demo?q=" + query,
+			Title: "Demo Search Query " + query,
 			Context: "Aliquam illum in quibusdam labore. Tempora soluta id soluta libero eius cum illo nesciunt illo. " +
 				"Voluptatem voluptatem quo sapiente delectus sunt explicabo quo sed ex eligendi error mollitia ut. ",
 		},
-	}, nil
+	}
+	if s.maxDelay == 0 {
+		return result, nil
+	}
+
+	delay := rand.IntN(s.maxDelay-s.minDelay) + s.minDelay
+	select {
+	case <-time.After(time.Duration(delay) * time.Millisecond):
+		return result, nil
+	}
+
 }
 
-func MakeDemoSearcher() Searcher {
-	return &DemoSearcher{}
-}
-
-type AggregatedSearcher struct {
-	searchers []Searcher
-}
-
-func MakeCombinedSearcher(searchers []Searcher) *AggregatedSearcher {
-	return &AggregatedSearcher{
-		searchers: searchers,
+func MakeDemoSearcher() *DemoSearcher {
+	return &DemoSearcher{
+		minDelay: 0,
+		maxDelay: 0,
 	}
 }
 
-func (s *AggregatedSearcher) Search(query string) ([]Result, error) {
-	// Todo: implement parallelized search
-	// Todo: implement tf-idf ranking of results
-	var searchResult []Result
-	for _, searcher := range s.searchers {
-		results, err := searcher.Search(query)
-		if err != nil {
-			return nil, err
-		}
-		searchResult = append(searchResult, results...)
+func MakeDemoSearcherWithDelay(minDelay int, maxDelay int) *DemoSearcher {
+	return &DemoSearcher{
+		minDelay: minDelay,
+		maxDelay: maxDelay,
 	}
-	return searchResult, nil
 }

@@ -59,11 +59,10 @@ func (l *LocalSearcher) Search(query string) ([]Result, error) {
 				errs = append(errs, fmt.Errorf("failed to unmarshal ripgrep match: %w", err))
 			}
 			result = append(result, Result{
-				Href:       l.dir + "/" + match.Path.Text,
-				Title:      match.Lines.Text,
-				Source:     "Local",
-				Context:    match.Lines.Text,
-				SourceIcon: l.configDir + "/favicon.ico",
+				Href:    match.Path.Text,
+				Title:   match.Lines.Text,
+				Source:  "Local",
+				Context: match.Lines.Text,
 			})
 		}
 	}
